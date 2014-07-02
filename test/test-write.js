@@ -1,6 +1,6 @@
 'use strict';
 var expect = require('chai').expect;
-var WritableBulk = require('../lib/writable-bulk');
+var WritableBulk = require('..').WritableBulk;
 var random = require('random-document-stream');
 var client = new require('elasticsearch').Client();
 

@@ -40,13 +40,21 @@ var search = {
 var queryExec = client.search.bind(client);
 
 var rs = new ReadableSearch(queryExec, search);
+var ws = new require('stream').Writable({objectMode:true});
+ws._write = function(chunk, enc, next) {
+  console.log('a hit', hit);
+  next();
+};
+
 rs.pipe(ws);
 ```
 
 ## TODO
 ### Short term
 * Document more
-* Handle errors correctly
+* Multi-get as a duplex
+* Bulk document errors emitted as errors.
+* Search stream: access to total, aggregations etc
 
 ## Later
 Streaming http client

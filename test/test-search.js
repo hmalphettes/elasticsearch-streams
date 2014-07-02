@@ -1,6 +1,6 @@
 'use strict';
 var expect = require('chai').expect;
-var ReadableHits = require('../lib/readable-hits');
+var ReadableSearch = require('..').ReadableSearch;
 var Writable = require('stream').Writable;
 var client = new require('elasticsearch').Client();
 
@@ -29,7 +29,7 @@ describe('When searching', function() {
       var queryExec = function(params, callback) {
         client.search(params, callback);
       };
-      rs = new ReadableHits(queryExec, params);
+      rs = new ReadableSearch(queryExec, params);
       done();
     });
   });
