@@ -30,7 +30,7 @@ describe('When writing', function() {
       random(42).pipe(ws);
     });
   });
-  it('Must have indexed a 100 docs', function(done) {
+  it('Must have indexed 42 docs', function(done) {
     client.indices.refresh({ index: 'myindex2' }, function() {
       client.count({
         index: 'myindex2',

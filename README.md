@@ -21,10 +21,12 @@ var bulkExec = function(bulkCmds, callback) {
   }, callback);
 };
 var ws = new WritableBulk(bulkExec);
+
+// stream 42 random records into ES
 require('random-document-stream')(42).pipe(ws);
 ```
 
-## Stream search results into Elasticsearch
+## Stream search results from Elasticsearch
 ```
 var ReadableSearch = require('elasticsearch-streams')
 var client = new require('elasticsearch').Client();
