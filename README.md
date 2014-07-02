@@ -11,6 +11,7 @@ Examples:
 
 ## Stream random records into Elasticsearch
 ```
+var WritableBulk = require('elasticsearch-streams').WritableBulk;
 var client = new require('elasticsearch').Client();
 
 var bulkExec = function(bulkCmds, callback) {
@@ -28,7 +29,7 @@ require('random-document-stream')(42).pipe(ws);
 
 ## Stream search results from Elasticsearch
 ```
-var ReadableSearch = require('elasticsearch-streams')
+var ReadableSearch = require('elasticsearch-streams').ReadableSearch;
 var client = new require('elasticsearch').Client();
 
 var search = {
@@ -59,7 +60,7 @@ rs.pipe(ws);
 * Search stream: access to total, aggregations etc
 
 ## Later
-Streaming http client
+Streaming http client or transport
 
 # LICENSE
 elasticsearch-streams is freely distributable under the terms of the MIT license.
