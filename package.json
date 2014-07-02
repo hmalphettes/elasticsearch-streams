@@ -1,0 +1,25 @@
+{
+  "name": "elasticsearch-streams",
+  "description": "Stream in and out of Elasticsearch",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hmalphettes/elasticsearch-streamer.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "jshint lib/*.js test/*.js && mocha"
+  },
+  "author": "Hugues Malphettes",
+  "license": "MIT",
+  "keywords": [
+    "elasticsearch",
+    "stream"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+    "chai": "*",
+    "elasticsearch": "*"
+  }
+}
