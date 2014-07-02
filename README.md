@@ -5,9 +5,10 @@ hits and documents responses.
 
 Use case: pipe to and from levelup, pouchdb and other friends.
 
-The client is more or less agnostic at the moment.
+The client that executes the requests is more or less abstracted at the moment.
+Examples and tests are using the official client.
 
-Examples:
+# Examples:
 
 ## Stream random records into Elasticsearch
 ```
