@@ -5,8 +5,10 @@ hits and documents responses.
 
 Use case: pipe to and from levelup, pouchdb and other friends.
 
-The client that executes the requests is more or less abstracted at the moment.
-Examples and tests are using the official client.
+The client that executes the requests is wrapped in a closure.
+It is expected to provide the Elasticsearch reponse's body as a JSON.
+
+See the examples and tests with the official Elasticsearch-js client.
 
 # Examples:
 
@@ -33,17 +35,18 @@ require('random-document-stream')(42).pipe(ws);
 var ReadableSearch = require('elasticsearch-streams').ReadableSearch;
 var client = new require('elasticsearch').Client();
 
-var search = {
-  index: 'myindex',
-  from: 0,
-  size: 12,
-  body: {
-    query: { match_all: {} }
-  }
+var searchExec = function searchExec(from, callback) {
+  client.search({
+    index: 'myindex',
+    from: from,
+    size: 12,
+    body: {
+      query: { match_all: {} }
+    }
+  }, callback);
 };
-var queryExec = client.search.bind(client);
 
-var rs = new ReadableSearch(queryExec, search);
+var rs = new ReadableSearch(searchExec);
 var ws = new require('stream').Writable({objectMode:true});
 ws._write = function(chunk, enc, next) {
   console.log('a hit', hit);
@@ -53,15 +56,45 @@ ws._write = function(chunk, enc, next) {
 rs.pipe(ws);
 ```
 
+## Stream scroll/scan results from Elasticsearch
+```
+var scrollExec = function scrollExec(from, callback) {
+  if (this.scroll_id) {
+    return client.scroll({
+      scrollId : this.scroll_id,
+      scroll   : '30s'
+    }, callback);
+  }
+  // get a scroll id first
+  var self = this;
+  client.search({
+    index: 'myindex',
+    scroll: '20s',
+    size: '3',
+    body: {
+      query: { match_all: {} }
+    }
+  }, function(e, resp) {
+    self.scroll_id = resp._scroll_id;
+    callback(e, resp);
+  });
+};
+rs = new ReadableSearch(scrollExec);
+```
+
+## Stream IDs into Elasticsearch multi-get and get documents out.
+```
+# TODO a duplex stream
+```
+
 ## TODO
 ### Short term
 * Document more
 * Multi-get as a duplex
-* Bulk document errors emitted as errors.
-* Search stream: access to total, aggregations etc
+* Bulk document errors should be emitted as errors
 
 ## Later
-Streaming http client or transport
+Streaming http client or elasticsearch-js streaming transport.
 
 # LICENSE
 elasticsearch-streams is freely distributable under the terms of the MIT license.

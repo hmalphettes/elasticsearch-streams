@@ -9,8 +9,8 @@ describe('When writing', function() {
   before(function(done) {
     var bulkExec = function(bulkCmds, callback) {
       client.bulk({
-        index : 'myindex2',
-        type  : 'mytype2',
+        index : 'myindex',
+        type  : 'mytype',
         body  : bulkCmds
       }, callback);
     };
@@ -33,8 +33,8 @@ describe('When writing', function() {
   it('Must have indexed 42 docs', function(done) {
     client.indices.refresh({ index: 'myindex2' }, function() {
       client.count({
-        index: 'myindex2',
-        type: 'mytype2'
+        index: 'myindex',
+        type: 'mytype'
       }, function(e, res) {
         if (e) { return done(e); }
         expect(res.count).to.equal(42);
