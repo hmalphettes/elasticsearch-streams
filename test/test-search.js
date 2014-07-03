@@ -1,8 +1,10 @@
 'use strict';
 var expect = require('chai').expect;
 var ReadableSearch = require('..').ReadableSearch;
+var PipableDocs = require('..').PipableDocs;
 var Writable = require('stream').Writable;
-var client = new require('elasticsearch').Client();
+var Readable = require('stream').Readable;
+var client = new require('elasticsearch').Client({log: 'warning'});
 var random = require('random-document-stream');
 
 describe('When searching', function() {
@@ -25,7 +27,7 @@ describe('When searching', function() {
     });
   });
   it('Must find 42 records by searching them', function(done) {
-    checkRecords(rs, 42, done);
+    checkRecords(rs, null, 42, done);
   });
 });
 
@@ -60,11 +62,46 @@ describe('When scrolling', function() {
     });
   });
   it('Must find the 42 records by scroll', function(done) {
-    checkRecords(rs, 42, done);
+    checkRecords(rs, null, 42, done);
+  });
+});
+
+describe('When getting documents by id', function() {
+  var ids;
+  var ts;
+  before(function(done) {
+    ids = populateIndex(42, function(e) {
+      if (e) { return done(e); }
+      expect(ids.length).to.equal(42);
+      var mgetExec = function(docs, callback) {
+        client.mget({
+          index: 'myindex',
+          type: 'mytype',
+          body: {
+            docs: { ids: docs }
+          }
+        }, callback);
+      };
+      ts = new PipableDocs(mgetExec, 4);
+      done();
+    });
+  });
+  it('Must pipe', function(done) {
+    var i = -1;
+    var rs = new Readable({objectMode: true});
+    rs._read = function() {
+      i++;
+      if (i >= ids.length) {
+        return rs.push(null);
+      }
+      rs.push(ids[i]);
+    };
+    checkRecords(rs, ts, 42, done);
   });
 });
 
 function populateIndex(nb, done) {
+  var ids = [];
   client.indices.delete({index:'myindex'}, function() {
     var cmds = [];
     var generator = random(0);
@@ -72,6 +109,7 @@ function populateIndex(nb, done) {
       var rec = generator.makeJunk();
       cmds.push({ index:  { _index: 'myindex', _type: 'mytype', _id: rec._id } });
       cmds.push(rec);
+      ids.push(rec._id);
     }
     client.bulk({
       body: cmds
@@ -80,9 +118,10 @@ function populateIndex(nb, done) {
       client.indices.refresh({index: 'myindex'}, done);
     });
   });
+  return ids;
 }
 
-function checkRecords(rs, nb, done) {
+function checkRecords(rs, ts, nb, done) {
   var hits = [];
   var err;
   var ws = new Writable({objectMode:true});
@@ -90,18 +129,26 @@ function checkRecords(rs, nb, done) {
     hits.push(chunk);
     expect(chunk._index).to.equal('myindex');
     expect(chunk._type).to.equal('mytype');
-    expect(chunk._score).to.equal(1);
     expect(chunk._id).to.exist;
     expect(chunk._source.name).to.exist;
     next();
   };
-  rs.on('error', function(e) {
+  var errClosure = function(e) {
     err = e;
-  });
-  rs.on('end', function() {
+  };
+  rs.on('error', errClosure);
+  ws.on('error', errClosure);
+  if (ts) {
+    ts.on('error', errClosure);
+  }
+  function onFinish() {
     if (err) { return done(err); }
     expect(hits.length).to.equal(nb);
     done();
-  });
-  rs.pipe(ws);
+  }
+  if (ts) {
+    rs.pipe(ts).pipe(ws).on('finish', onFinish);
+  } else {
+    rs.pipe(ws).on('finish', onFinish);
+  }
 }

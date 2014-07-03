@@ -27,7 +27,7 @@ var bulkExec = function(bulkCmds, callback) {
 var ws = new WritableBulk(bulkExec);
 
 // stream 42 random records into ES
-require('random-document-stream')(42).pipe(ws);
+require('random-document-stream')(42).pipe(ws).on('finish', done);
 ```
 
 ## Stream search results from Elasticsearch
@@ -53,7 +53,7 @@ ws._write = function(chunk, enc, next) {
   next();
 };
 
-rs.pipe(ws);
+rs.pipe(ws).on('finish', done);
 ```
 
 If we want to start the stream at an offset and define a limit:
@@ -103,13 +103,37 @@ rs = new ReadableSearch(scrollExec);
 
 ## Stream IDs into Elasticsearch multi-get and get documents out.
 ```
-# TODO a duplex stream
+var mgetExec = function(docs, callback) {
+  client.mget({
+    index: 'myindex',
+    type: 'mytype',
+    body: {
+      docs: { ids: docs }
+    }
+  }, callback);
+};
+ts = new PipableDocs(mgetExec, 4);
+
+// Naive read stream of 12 ids that are numbers
+var rs = new Readable({objectMode: true});
+rs._read = function() {
+  for (var i = 0; i < 12; i++) {
+    rs.push(i);
+  }
+  rs.push(null);
+};
+
+var ws = new require('stream').Writable({objectMode:true});
+ws._write = function(chunk, enc, next) {
+  console.log(hit._id + ' found: ' + hit._found, hit);
+  next();
+};
+
+rs.pipe(ts).pipe(ws).on('finish', onFinish);
 ```
 
 ## TODO
 ### Short term
-* Document more
-* Multi-get as a duplex
 * Bulk document errors should be emitted as errors
 
 ## Later
