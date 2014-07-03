@@ -56,6 +56,25 @@ ws._write = function(chunk, enc, next) {
 rs.pipe(ws);
 ```
 
+If we want to start the stream at an offset and define a limit:
+
+```
+var offset = 7;
+var limit  = 21;
+var page   = 12;
+
+var searchExec = function searchExec(from, callback) {
+  client.search({
+    index: 'myindex',
+    from: from + offset,
+    size: (offset + from + page) > limit ? (limit - offset - from) : page,
+    body: {
+      query: { match_all: {} }
+    }
+  }, callback);
+};
+```
+
 ## Stream scroll/scan results from Elasticsearch
 ```
 var scrollExec = function scrollExec(from, callback) {
