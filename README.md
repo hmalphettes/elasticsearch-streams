@@ -115,7 +115,7 @@ var mgetExec = function(docs, callback) {
 ts = new PipableDocs(mgetExec, 4);
 
 // Naive read stream of 12 ids that are numbers
-var rs = new Readable({objectMode: true});
+var rs = new require('stream').Readable({objectMode: true});
 rs._read = function() {
   for (var i = 0; i < 12; i++) {
     rs.push(i);
