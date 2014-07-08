@@ -1,7 +1,7 @@
 {
   "name": "elasticsearch-streams",
   "description": "Stream in and out of Elasticsearch",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/hmalphettes/elasticsearch-streamer.git"
