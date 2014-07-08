@@ -132,13 +132,6 @@ ws._write = function(chunk, enc, next) {
 rs.pipe(ts).pipe(ws).on('finish', onFinish);
 ```
 
-## TODO
-### Short term
-* Bulk document errors should be emitted as errors
-
-## Later
-Streaming http client or elasticsearch-js streaming transport.
-
 # LICENSE
 elasticsearch-streams is freely distributable under the terms of the MIT license.
 
