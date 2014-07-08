@@ -20,8 +20,7 @@ describe('When writing', function() {
     ws = new WritableBulk(bulkExec);
     ws.on('error', function(e) {
       err = e;
-    });
-    ws.on('end', function() {
+    }).on('finish', function() {
       done(err);
     });
     // drop the index then
