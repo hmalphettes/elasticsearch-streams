@@ -25,9 +25,9 @@ var bulkExec = function(bulkCmds, callback) {
   }, callback);
 };
 var ws = new WritableBulk(bulkExec);
-
+var toBulk = new TransformToBulk(function getIndexTypeId(doc) { return { _id: doc.id }; });
 // stream 42 random records into ES
-require('random-document-stream')(42).pipe(ws).on('finish', done);
+require('random-document-stream')(42).pipe(toBulk).pipe(ws).on('finish', done);
 ```
 
 ## Stream search results from Elasticsearch
