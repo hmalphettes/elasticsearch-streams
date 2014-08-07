@@ -89,7 +89,7 @@ var scrollExec = function scrollExec(from, callback) {
   client.search({
     index: 'myindex',
     scroll: '20s',
-    size: '3',
+    size: 42,
     body: {
       query: { match_all: {} }
     }
