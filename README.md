@@ -30,6 +30,12 @@ var toBulk = new TransformToBulk(function getIndexTypeId(doc) { return { _id: do
 require('random-document-stream')(42).pipe(toBulk).pipe(ws).on('finish', done);
 ```
 
+NOTE: One must listen to the `close` event emitted by the write stream to know
+when all the data has been written and flushed to Elasticsearch.
+
+Listening to `finish` does not mean much really as we are in this situation:
+https://github.com/joyent/node/issues/5315#issuecomment-16670354
+
 ## Stream search results from Elasticsearch
 ```
 var ReadableSearch = require('elasticsearch-streams').ReadableSearch;
@@ -53,7 +59,7 @@ ws._write = function(chunk, enc, next) {
   next();
 };
 
-rs.pipe(ws).on('finish', done);
+rs.pipe(ws).on('close', done);
 ```
 
 If we want to start the stream at an offset and define a limit:

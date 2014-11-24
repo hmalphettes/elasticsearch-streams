@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "chai": "*",
-    "elasticsearch": "*"
+    "elasticsearch": "*",
+    "random-document-stream": "*"
   }
 }
