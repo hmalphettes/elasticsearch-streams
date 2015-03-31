@@ -36,6 +36,14 @@ when all the data has been written and flushed to Elasticsearch.
 Listening to `finish` does not mean much really as we are in this situation:
 https://github.com/joyent/node/issues/5315#issuecomment-16670354
 
+For example to close the ES client as soon as we are done:
+
+```
+ws.on('close', function () {
+  client.close();
+});
+```
+
 ## Stream search results from Elasticsearch
 ```
 var ReadableSearch = require('elasticsearch-streams').ReadableSearch;
@@ -141,7 +149,7 @@ rs.pipe(ts).pipe(ws).on('finish', onFinish);
 # LICENSE
 elasticsearch-streams is freely distributable under the terms of the MIT license.
 
-Copyright (c) 2014 Sutoiku, Inc.
+Copyright (c) 2015 Sutoiku, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
