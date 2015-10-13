@@ -13,7 +13,7 @@ See the examples and tests with the official Elasticsearch-js client.
 # Examples:
 
 ## Stream random records into Elasticsearch
-```
+```js
 var WritableBulk = require('elasticsearch-streams').WritableBulk;
 var client = new require('elasticsearch').Client();
 
@@ -38,14 +38,14 @@ https://github.com/joyent/node/issues/5315#issuecomment-16670354
 
 For example to close the ES client as soon as we are done:
 
-```
+```js
 ws.on('close', function () {
   client.close();
 });
 ```
 
 ## Stream search results from Elasticsearch
-```
+```js
 var ReadableSearch = require('elasticsearch-streams').ReadableSearch;
 var client = new require('elasticsearch').Client();
 
@@ -72,7 +72,7 @@ rs.pipe(ws).on('close', done);
 
 If we want to start the stream at an offset and define a limit:
 
-```
+```js
 var offset = 7;
 var limit  = 21;
 var page   = 12;
@@ -90,7 +90,7 @@ var searchExec = function searchExec(from, callback) {
 ```
 
 ## Stream scroll/scan results from Elasticsearch
-```
+```js
 var scrollExec = function scrollExec(from, callback) {
   if (this.scroll_id) {
     return client.scroll({
@@ -116,7 +116,7 @@ rs = new ReadableSearch(scrollExec);
 ```
 
 ## Stream IDs into Elasticsearch multi-get and get documents out.
-```
+```js
 var mgetExec = function(docs, callback) {
   client.mget({
     index: 'myindex',
