@@ -10,6 +10,12 @@ It is expected to provide the Elasticsearch reponse's body as a JSON.
 
 See the examples and tests with the official Elasticsearch-js client.
 
+# Installation
+
+```shell
+npm install --save elasticsearch-streams
+```
+
 # Examples:
 
 ## Stream random records into Elasticsearch
