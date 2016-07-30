@@ -21,6 +21,7 @@ npm install --save elasticsearch-streams
 ## Stream random records into Elasticsearch
 ```js
 var WritableBulk = require('elasticsearch-streams').WritableBulk;
+var TransformToBulk = require('elasticsearch-streams').TransformToBulk;
 var client = new require('elasticsearch').Client();
 
 var bulkExec = function(bulkCmds, callback) {
