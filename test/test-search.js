@@ -78,7 +78,7 @@ describe('When getting documents by id', function() {
           index: 'myindex',
           type: 'mytype',
           body: {
-            docs: { ids: docs }
+            ids: docs
           }
         }, callback);
       };
@@ -110,6 +110,7 @@ function populateIndex(nb, done) {
       cmds.push({ index:  { _index: 'myindex', _type: 'mytype', _id: rec._id } });
       cmds.push(rec);
       ids.push(rec._id);
+      rec._id = undefined;
     }
     client.bulk({
       body: cmds
@@ -135,6 +136,9 @@ function checkRecords(rs, ts, nb, done) {
   };
   var errClosure = function(e) {
     err = e;
+    var complete = done;
+    done = null;
+    return complete(e);
   };
   rs.on('error', errClosure);
   ws.on('error', errClosure);
@@ -142,9 +146,9 @@ function checkRecords(rs, ts, nb, done) {
     ts.on('error', errClosure);
   }
   function onFinish() {
-    if (err) { return done(err); }
+    if (err) { return done && done(err); }
     expect(hits.length).to.equal(nb);
-    done();
+    done && done();
   }
   if (ts) {
     rs.pipe(ts).pipe(ws).on('finish', onFinish);

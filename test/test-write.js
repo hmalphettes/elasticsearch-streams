@@ -26,7 +26,9 @@ describe('When writing', function() {
     });
 
     var transformToBulk = new TransformToBulk(function(doc) {
-      return { _id: doc._id };
+      var docId = doc._id;
+      doc._id = undefined;
+      return { _id: docId };
     });
     // drop the index then
     client.indices.delete({index: 'myindex2'}, function() {
