@@ -26,8 +26,8 @@ var client = new require('elasticsearch').Client();
 
 var bulkExec = function(bulkCmds, callback) {
   client.bulk({
-    index : 'myindex',
-    type  : 'mytype',
+    _index : 'myindex',
+    _type  : 'mytype',
     body  : bulkCmds
   }, callback);
 };
