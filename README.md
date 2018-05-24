@@ -25,7 +25,7 @@ var TransformToBulk = require('elasticsearch-streams').TransformToBulk;
 var client = new require('elasticsearch').Client();
 
 var bulkExec = function(bulkCmds, callback) {
-  client.bulk({
+  return client.bulk({
     _index : 'myindex',
     _type  : 'mytype',
     body  : bulkCmds
@@ -57,7 +57,7 @@ var ReadableSearch = require('elasticsearch-streams').ReadableSearch;
 var client = new require('elasticsearch').Client();
 
 var searchExec = function searchExec(from, callback) {
-  client.search({
+  return client.search({
     index: 'myindex',
     from: from,
     size: 12,
@@ -70,7 +70,7 @@ var searchExec = function searchExec(from, callback) {
 var rs = new ReadableSearch(searchExec);
 var ws = new require('stream').Writable({objectMode:true});
 ws._write = function(chunk, enc, next) {
-  console.log('a hit', hit);
+  console.log('a chunk', chunk);
   next();
 };
 
@@ -85,7 +85,7 @@ var limit  = 21;
 var page   = 12;
 
 var searchExec = function searchExec(from, callback) {
-  client.search({
+  return client.search({
     index: 'myindex',
     from: from + offset,
     size: (offset + from + page) > limit ? (limit - offset - from) : page,
@@ -125,7 +125,7 @@ rs = new ReadableSearch(scrollExec);
 ## Stream IDs into Elasticsearch multi-get and get documents out.
 ```js
 var mgetExec = function(docs, callback) {
-  client.mget({
+  return client.mget({
     index: 'myindex',
     type: 'mytype',
     body: {
