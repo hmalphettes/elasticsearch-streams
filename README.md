@@ -37,16 +37,16 @@ var toBulk = new TransformToBulk(function getIndexTypeId(doc) { return { _id: do
 require('random-document-stream')(42).pipe(toBulk).pipe(ws).on('finish', done);
 ```
 
-NOTE: One must listen to the `custom_close` event emitted by the write stream to know
+NOTE: One must listen to the `elasticsearch_streams_close` event emitted by the write stream to know
 when all the data has been written and flushed to Elasticsearch.
 
 Listening to `finish` does not mean much really as we are in this situation:
 https://github.com/joyent/node/issues/5315#issuecomment-16670354
 
-For example to custom_close the ES client as soon as we are done:
+For example to elasticsearch_streams_close the ES client as soon as we are done:
 
 ```js
-ws.on('custom_close', function () {
+ws.on('elasticsearch_streams_close', function () {
   client.close();
 });
 ```

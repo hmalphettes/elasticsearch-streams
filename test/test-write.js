@@ -21,7 +21,7 @@ describe('When writing', function() {
     ws = new WritableBulk(bulkExec);
     ws.on('error', function(e) {
       err = e;
-    }).on('custom_close', function() {
+    }).on('elasticsearch_streams_close', function() {
       done(err);
     });
 
